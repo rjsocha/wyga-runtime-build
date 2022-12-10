@@ -1,0 +1,8 @@
+ARG VERSION
+FROM wyga/php:$VERSION-upstream
+RUN a2enmod rewrite remoteip && \
+    a2disconf other-vhosts-access-log && \
+    docker-php-ext-enable-mcrypt
+COPY config/apache/php/default.conf /etc/apache2/sites-available/000-default.conf
+COPY config/apache/auth/htpasswd /auth/htpasswd
+COPY config/php/apache/php.ini /usr/local/etc/php/php.ini

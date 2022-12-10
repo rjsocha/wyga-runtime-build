@@ -1,0 +1,52 @@
+#!/bin/bash
+set -eu
+CONSTRAINT=1.22
+
+_name=$(basename $0)
+if ! [[ $_name =~ ^build-([^-]+)-([0-9]+\.[0-9]+)\.([0-9]+)-(.+)$ ]]
+then
+  echo "ERROR: unable to parse specification ..."
+  exit 1
+fi
+
+_base="${BASH_REMATCH[1]}"
+_major="${BASH_REMATCH[2]}"
+_minor="${BASH_REMATCH[3]}"
+_flavour="${BASH_REMATCH[4]}"
+
+MAJOR_VERSION="${_major}"
+MINOR_VERSION="${_minor}"
+FLAVOUR="${_flavour}"
+
+VERSION=${MAJOR_VERSION}.${MINOR_VERSION}-${FLAVOUR}
+RELEASE=${MAJOR_VERSION}-${FLAVOUR}
+PUBLISH="stable-alpine ${MAJOR_VERSION}-alpine"
+
+_DOCKERFILE="dockerfile/nginx/Dockerfile.wyga"
+
+if [[ ! -s ${_DOCKERFILE} ]]
+then
+  echo "missing: ${_DOCKERFILE}"
+  exit 1
+fi
+
+if [[ ${CONSTRAINT} != ${MAJOR_VERSION} ]]
+then
+  echo "ERROR: wrong specification (constraint) ..."
+  exit 1
+fi
+
+source build.config
+
+echo "Building: ${REGISTRY}/nginx:${VERSION} from ${_DOCKERFILE}"
+docker build -t ${REGISTRY}/nginx:${VERSION} --no-cache --pull --build-arg VERSION=${VERSION} -f "${_DOCKERFILE}" .
+echo "Build: ${REGISTRY}/nginx:${VERSION}"
+docker push ${REGISTRY}/nginx:${VERSION}
+
+for _release in ${PUBLISH//,/ }
+do
+  docker tag  ${REGISTRY}/nginx:$VERSION ${REGISTRY}/nginx:${_release}
+  docker push ${REGISTRY}/nginx:${_release}
+done
+
+echo "$(date -R): ${REGISTRY}/php:${VERSION}-upstream: OK" | tee -a log.nginx

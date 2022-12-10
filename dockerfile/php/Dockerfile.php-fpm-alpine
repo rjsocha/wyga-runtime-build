@@ -1,0 +1,3 @@
+ARG VERSION
+FROM wyga/php:$VERSION-upstream
+COPY config/php/apache/php.ini /usr/local/etc/php/php.ini
