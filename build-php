@@ -1,0 +1,30 @@
+#!/bin/bash
+set -eu
+VERSION="${1:-}"
+_flavours="apache fpm fpm-alpine"
+
+if [[ -n "${VERSION}" ]]
+then
+  for _flavour in ${_flavours}
+  do
+    if [[ ! -x build-php-${VERSION}-${_flavour} ]]
+    then
+      echo "Missing build-php-${VERSION}-${_flavour}"
+      exit 1
+    fi
+  done
+  for _flavour in ${_flavours}
+  do
+    echo -n "Building ${VERSION}-${_flavour}: "
+    if "./build-php-${VERSION}-${_flavour}" &>log/build-php-${VERSION}-${_flavour}.log
+    then
+      echo "OK"
+    else
+      echo "FAIL"
+      exit 1
+    fi
+  done
+else
+  echo "$0 <VERSION>"
+  exit 1
+fi

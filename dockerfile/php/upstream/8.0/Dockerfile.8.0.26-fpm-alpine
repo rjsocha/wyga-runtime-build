@@ -9,9 +9,7 @@ RUN apk upgrade --no-cache && \
       exif \
       gd \
       gettext \
-      gmagick \
       gmp \
-      imagick \
       intl \
       mcrypt \
       memcache \

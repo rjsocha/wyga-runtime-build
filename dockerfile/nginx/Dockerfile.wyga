@@ -1,8 +1,8 @@
 ARG VERSION
 FROM alpine AS files
 COPY files/nginx/wyga/wyga-entrypoint.sh /nginx/
-COPY files/nginx/wyga/env-conf /nginx/usr/bin/
-RUN chmod +x /nginx/usr/bin/env-conf /nginx/wyga-entrypoint.sh
+COPY files/wyga/env-conf /nginx/usr/local/bin/
+RUN chmod +x /nginx/usr/local/bin/env-conf /nginx/wyga-entrypoint.sh
 FROM nginx:$VERSION
 COPY --from=files /nginx/ /
 ENTRYPOINT [ "/wyga-entrypoint.sh" ]

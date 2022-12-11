@@ -11,9 +11,7 @@ RUN apt-get update -qq && \
       exif \
       gd \
       gettext \
-      gmagick \
       gmp \
-      imagick \
       intl \
       mcrypt \
       memcache \

@@ -1,3 +1,14 @@
 ARG VERSION
+FROM alpine AS files
+COPY config/php/apache/php.ini /php/usr/local/etc/php/php.ini
+COPY files/php/wyga/wyga-entrypoint.sh /php/
+COPY files/wyga/env-conf /php/usr/local/bin/env-conf
+RUN chmod +x /php/wyga-entrypoint.sh /php/usr/local/bin/env-conf
+RUN mkdir -p /php/app/public
+
 FROM wyga/php:$VERSION-upstream
-COPY config/php/apache/php.ini /usr/local/etc/php/php.ini
+COPY --from=files /php/ /
+
+WORKDIR /app
+ENTRYPOINT [ "/wyga-entrypoint.sh" ]
+CMD [ "php-fpm" ]

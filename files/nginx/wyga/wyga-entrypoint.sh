@@ -1,3 +1,3 @@
 #!/bin/sh
-/usr/bin/env-conf
+/usr/local/bin/env-conf
 exec /docker-entrypoint.sh "$@"
