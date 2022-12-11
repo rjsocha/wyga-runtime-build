@@ -1,0 +1,12 @@
+Sun, 11 Dec 2022 02:11:26 +0100: wyga/php:7.4.33-apache: OK
+Sun, 11 Dec 2022 02:11:43 +0100: wyga/php:7.4.33-fpm: OK
+Sun, 11 Dec 2022 02:12:01 +0100: wyga/php:7.4.33-fpm-alpine: OK
+Sun, 11 Dec 2022 02:13:06 +0100: wyga/php:8.0.26-apache: OK
+Sun, 11 Dec 2022 02:13:24 +0100: wyga/php:8.0.26-fpm: OK
+Sun, 11 Dec 2022 02:13:42 +0100: wyga/php:8.0.26-fpm-alpine: OK
+Sun, 11 Dec 2022 02:14:11 +0100: wyga/php:8.1.13-apache: OK
+Sun, 11 Dec 2022 02:14:29 +0100: wyga/php:8.1.13-fpm: OK
+Sun, 11 Dec 2022 02:14:48 +0100: wyga/php:8.1.13-fpm-alpine: OK
+Sun, 11 Dec 2022 02:17:16 +0100: wyga/php:8.2.0-apache: OK
+Sun, 11 Dec 2022 02:17:35 +0100: wyga/php:8.2.0-fpm: OK
+Sun, 11 Dec 2022 02:17:53 +0100: wyga/php:8.2.0-fpm-alpine: OK

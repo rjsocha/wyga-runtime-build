@@ -20,7 +20,7 @@ FLAVOUR="${_flavour}"
 
 VERSION=${MAJOR_VERSION}.${MINOR_VERSION}-${FLAVOUR}
 RELEASE=${MAJOR_VERSION}-${FLAVOUR}
-PUBLISH="stable-alpine ${MAJOR_VERSION}-alpine"
+PUBLISH="stable-alpine ${MAJOR_VERSION}-alpine alpine"
 
 _DOCKERFILE="dockerfile/nginx/Dockerfile.wyga"
 
@@ -49,4 +49,4 @@ do
   docker push ${REGISTRY}/nginx:${_release}
 done
 
-echo "$(date -R): ${REGISTRY}/php:${VERSION}-upstream: OK" | tee -a log.nginx
+echo "$(date -R): ${REGISTRY}/nginx:${VERSION}: OK" | tee -a log.nginx

@@ -49,4 +49,4 @@ do
   docker push ${REGISTRY}/nginx:${_release}
 done
 
-echo "$(date -R): ${REGISTRY}/php:${VERSION}-upstream: OK" | tee -a log.nginx
+echo "$(date -R): ${REGISTRY}/nginx:${VERSION}: OK" | tee -a log.nginx
