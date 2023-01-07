@@ -1,0 +1,29 @@
+FROM php:8.2.1-fpm
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -qq && \
+    apt-get dist-upgrade -qq && \
+    chmod +x /usr/local/bin/install-php-extensions && \
+    IPE_DONT_ENABLE=1 IPE_GD_WITHOUTAVIF=1 install-php-extensions \
+      bcmath \
+      bz2 \
+      calendar \
+      exif \
+      gd \
+      gettext \
+      gmp \
+      intl \
+      mcrypt \
+      memcache \
+      memcached \
+      mongodb  \
+      mysqli \
+      opcache \
+      pdo_mysql \
+      pdo_pgsql \
+      pgsql \
+      redis \
+      xdebug \
+      zip && \
+    apt-get clean all && \
+    find /var/lib/apt/lists/ -type f -delete

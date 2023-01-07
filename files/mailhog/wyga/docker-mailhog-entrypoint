@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+_WE_STORAGE=""
+if [ -z "${MH_STORAGE:-}" ]
+then
+  _WE_STORAGE="-storage maildir -maildir-path /maildir"
+fi
+if [ $# -gt 0 ]
+then
+  exec "$@"
+else
+  exec /mailhog/MailHog ${_WE_STORAGE}
+fi

@@ -1,0 +1,10 @@
+ARG VERSION
+FROM alpine AS files
+COPY files/pma/db /db/
+WORKDIR /db/
+RUN chmod +x generate-payload.sh && \
+  ./generate-payload.sh >pma-init.sh && \
+  chmod -x pma-init.sh
+FROM mariadb:${VERSION}
+COPY --from=files /db/pma-init.sh /docker-entrypoint-initdb.d/
+STOPSIGNAL SIGSTOP

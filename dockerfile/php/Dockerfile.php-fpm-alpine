@@ -1,6 +1,17 @@
 ARG VERSION
+FROM golang:1.19-alpine as mhsendmail
+RUN apk --no-cache add --virtual build-dependencies \
+    git binutils \
+  && mkdir -p /root/gocode \
+  && export GOPATH=/root/gocode \
+  && export CGO_ENABLED=0 \
+  && go install github.com/mailhog/mhsendmail@latest \
+  && strip -x /root/gocode/bin/mhsendmail
+RUN mkdir /mhsendmail && \
+  cp /root/gocode/bin/mhsendmail /mhsendmail/mhsendmail
 FROM alpine AS files
-COPY config/php/apache/php.ini /php/usr/local/etc/php/php.ini
+COPY --from=mhsendmail /mhsendmail/mhsendmail /php/usr/local/bin/mhsendmail
+COPY config/php/fpm/php.ini /php/usr/local/etc/php/php.ini
 COPY files/php/wyga/wyga-entrypoint.sh /php/
 COPY files/wyga/env-conf /php/usr/local/bin/env-conf
 RUN chmod +x /php/wyga-entrypoint.sh /php/usr/local/bin/env-conf

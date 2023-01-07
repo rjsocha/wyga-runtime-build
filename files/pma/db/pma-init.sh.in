@@ -1,0 +1,17 @@
+if [ -n "${PMA_PMADB:-}" ] && [ -n "${PMA_CONTROLUSER:-}" ] && [ -n "${PMA_CONTROLPASS:-}" ]
+then
+  {
+    # sanitaze variables
+    PMA_PMADB="${PMA_PMADB//|/\\|}"
+    PMA_PMADB="${PMA_PMADB//\"/\\\"}"
+    PMA_CONTROLUSER="${PMA_CONTROLUSER//|/\\|}"
+    PMA_CONTROLUSER="${PMA_CONTROLUSER//\"/\\\"}"
+    PMA_CONTROLPASS="${PMA_CONTROLPASS//|/\\|}"
+    PMA_CONTROLPASS="${PMA_CONTROLPASS//\"/\\\"}"
+    echo -n "$PMA_SQL" | base64 -d | zcat | \
+      sed -e "s|{{.PMA_PMADB.}}|${PMA_PMADB}|g" \
+          -e "s|{{.PMA_CONTROLUSER.}}|${PMA_CONTROLUSER}|g" \
+          -e "s|{{.PMA_CONTROLPASS.}}|${PMA_CONTROLPASS}|g" 
+  } | tee /var/lib/mysql/my.sql | docker_process_sql
+  echo "Restore complete ..."
+fi

@@ -45,7 +45,10 @@ then
     else
       _mode_name="create"
     fi
-    echo "env-conf: processing environment variables ${_env}* as file ${_file} (${_mode_name})"
+    if [ -n "${ENVCFGVERBOSE:-}" ]
+    then
+      echo "env-conf: processing environment variables ${_env}* as file ${_file} (${_mode_name})"
+    fi
     _dir="$(dirname "${_file}")"
     mkdir -p "${_dir}"
     if [ "${_mode}"x == "+"x ]

@@ -1,0 +1,53 @@
+#!/bin/bash
+set -eu
+CONSTRAINT=10.10
+
+_name=$(basename $0)
+if ! [[ $_name =~ ^build-([^-]+)-([0-9]+\.[0-9]+)\.([0-9]+)-(.+)$ ]]
+then
+  echo "ERROR: unable to parse specification ..."
+  exit 1
+fi
+
+_base="${BASH_REMATCH[1]}"
+_major="${BASH_REMATCH[2]}"
+_minor="${BASH_REMATCH[3]}"
+_flavour="${BASH_REMATCH[4]}"
+
+MAJOR_VERSION="${_major}"
+MINOR_VERSION="${_minor}"
+FLAVOUR="${_flavour}"
+
+VERSION="${MAJOR_VERSION}.${MINOR_VERSION}"
+RELEASE="${MAJOR_VERSION}-${FLAVOUR}"
+PUBLISH="${MAJOR_VERSION}-${FLAVOUR}"
+
+_DOCKERFILE="dockerfile/pma/db/Dockerfile.${MAJOR_VERSION}"
+
+if [[ ! -s ${_DOCKERFILE} ]]
+then
+  echo "missing: ${_DOCKERFILE}"
+  exit 1
+fi
+
+if [[ ${CONSTRAINT} != ${MAJOR_VERSION} ]]
+then
+  echo "ERROR: wrong specification (constraint) ..."
+  exit 1
+fi
+
+source build.config
+
+echo "Building: ${REGISTRY}/maridb:${VERSION}-${FLAVOUR} from ${_DOCKERFILE}"
+docker build -t ${REGISTRY}/mariadb:${VERSION}-${FLAVOUR} --no-cache --pull --build-arg VERSION=${VERSION} -f "${_DOCKERFILE}" .
+
+echo "Build: ${REGISTRY}/mariadb:${VERSION}-${FLAVOUR}"
+docker push ${REGISTRY}/mariadb:${VERSION}-${FLAVOUR}
+
+for _release in ${PUBLISH//,/ }
+do
+  docker tag  ${REGISTRY}/mariadb:$VERSION-${FLAVOUR} ${REGISTRY}/mariadb:${_release}
+  docker push ${REGISTRY}/mariadb:${_release}
+done
+
+echo "$(date -R): ${REGISTRY}/mariadb:${VERSION}-${FLAVOUR}: OK" | tee -a log.mariadb-pma
