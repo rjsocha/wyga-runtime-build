@@ -5,6 +5,7 @@ COPY files/nginx/wyga/nginx.conf /nginx/etc/nginx/nginx.conf
 COPY files/wyga/env-conf /nginx/usr/local/bin/
 RUN chmod +x /nginx/usr/local/bin/env-conf /nginx/wyga-entrypoint.sh
 FROM nginx:$VERSION
+RUN apk --no-cache -U upgrade
 COPY --from=files /nginx/ /
 ENTRYPOINT [ "/wyga-entrypoint.sh" ]
 CMD ["nginx", "-g", "daemon off;"]

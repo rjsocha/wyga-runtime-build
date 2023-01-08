@@ -1,0 +1,13 @@
+ARG VERSION
+FROM nginx:$VERSION-slim as template
+RUN apk --no-cache -U upgrade
+RUN apk del tzdata libintl libc-utils ca-certificates-bundle alpine-keys apk-tools
+RUN rm -rf /etc/group- /etc/passwd- /etc/shadow- /lib/apk /lib/firmware /lib/mdev rm /lib/modules-load.d /lib/sysctl.d /etc/sysctl.conf /etc/udhcpd.conf /media /mnt /opt /srv /var/spool /var/opt /var/mail /var/cache/apk /usr/sbin/nginx-debug /etc/init.d /etc/apk /etc/logrotate.d  /etc/modprobe.d /etc/modules-load.d /etc/network /etc/opt /etc/periodic /etc/secfixes.d /etc/ssl /etc/sysctl.d /home /var/lib/misc /var/lib/udhcpd  /usr/lib/modules-load.d /etc/conf.d /etc/crontabs /etc/profile.d /etc/inittab  /etc/motd /etc/fstab /usr/share/licenses /usr/share/man /usr/share/misc /usr/share/udhcpc
+COPY files/nginx/wyga/wyga-entrypoint.sh /
+COPY files/nginx/wyga/nginx.conf /etc/nginx/nginx.conf
+COPY files/wyga/env-conf /usr/local/bin/
+RUN chmod +x /usr/local/bin/env-conf /wyga-entrypoint.sh
+FROM scratch
+COPY --from=template / /
+ENTRYPOINT [ "/wyga-entrypoint.sh" ]
+CMD ["nginx", "-g", "daemon off;"]

@@ -46,6 +46,7 @@ do
   _tags+=( "${REGISTRY}/nginx:${_release}" )
 done
 
+docker buildx use multi-arch
 docker buildx build --platform linux/amd64,linux/arm64 -t ${REGISTRY}/nginx:${VERSION} ${_tags[@]} --push --no-cache --pull --build-arg VERSION=${VERSION} -f "${_DOCKERFILE}" .
 echo "Build: ${REGISTRY}/nginx:${VERSION}"
 
