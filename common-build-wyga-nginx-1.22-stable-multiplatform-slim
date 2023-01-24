@@ -20,8 +20,7 @@ FLAVOUR="${_flavour}"
 
 VERSION="${MAJOR_VERSION}.${MINOR_VERSION}-${FLAVOUR}"
 RELEASE="${MAJOR_VERSION}-slim"
-
-_DOCKERFILE="dockerfile/nginx/Dockerfile.wyga-slim"
+_DOCKERFILE="dockerfile/nginx/Dockerfile.1.22-wyga-slim"
 
 if [[ ! -s ${_DOCKERFILE} ]]
 then
