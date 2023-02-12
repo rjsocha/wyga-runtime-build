@@ -1,4 +1,4 @@
-FROM php:8.1.14-apache
+FROM php:8.2.2-apache
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -qq && \
@@ -19,7 +19,6 @@ RUN apt-get update -qq && \
       gettext \
       gmp \
       intl \
-      mcrypt \
       memcache \
       memcached \
       mongodb  \

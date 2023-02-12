@@ -14,16 +14,15 @@ COPY --from=mhsendmail /mhsendmail/mhsendmail /php/usr/local/bin/mhsendmail
 COPY config/apache/php/default.conf /php/etc/apache2/sites-available/000-default.conf
 COPY config/apache/auth/htpasswd /php/auth/htpasswd
 COPY config/php/apache/php.ini /php/usr/local/etc/php/php.ini
-COPY files/php/wyga/wyga-entrypoint.sh /php/
+COPY files/php/wyga/wyga-entrypoint /php/usr/local/bin/wyga-entrypoint
 COPY files/wyga/env-conf.bash /php/usr/local/bin/env-conf
-RUN chmod +x /php/wyga-entrypoint.sh /php/usr/local/bin/env-conf
+RUN chmod +x /php/usr/local/bin/wyga-entrypoint /php/usr/local/bin/env-conf
 RUN mkdir -p /php/app/public
 
 FROM wyga/php:$VERSION-upstream
 RUN a2enmod rewrite remoteip && \
     a2disconf other-vhosts-access-log 
 COPY --from=files /php/ /
-
 WORKDIR /app
-ENTRYPOINT [ "/wyga-entrypoint.sh" ]
 CMD [ "apache2-foreground" ]
+ENTRYPOINT ["tini", "--","wyga-entrypoint" ]

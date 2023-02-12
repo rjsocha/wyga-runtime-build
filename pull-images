@@ -1,0 +1,16 @@
+#!/bin/bash
+set -eu
+ME="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+REGISTRY=registry.a.wyga.site
+
+for image in $(<"${ME}/pull-images.list")
+do
+  if [[ ${image} =~ ^# ]]
+  then
+    continue
+  fi
+  docker image pull "${image}"
+  docker image tag "${image}" "${REGISTRY}/${image}"
+  docker image push "${REGISTRY}/${image}"
+  echo "DONE: ${image}"
+done

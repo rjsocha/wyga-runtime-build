@@ -1,4 +1,4 @@
-FROM php:8.1.14-apache
+FROM php:8.1.15-fpm
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -qq && \
@@ -9,6 +9,7 @@ RUN apt-get update -qq && \
     ln -s /bin/busybox /usr/local/bin/ip && \
     ln -s /bin/busybox /usr/local/bin/netstat && \
     ln -s /bin/busybox /usr/local/bin/vi && \
+    find /usr/local/etc/php-fpm.d/ -type f -delete && \ 
     chmod +x /usr/local/bin/install-php-extensions && \
     IPE_DONT_ENABLE=1 IPE_GD_WITHOUTAVIF=1 install-php-extensions \
       bcmath \
@@ -33,5 +34,7 @@ RUN apt-get update -qq && \
       zip && \
     apt-get clean all && \
     find /var/lib/apt/lists/ -type f -delete
-CMD ["apache2-foreground"]
+COPY files/php/fpm/8.1/default.conf /usr/local/etc/php-fpm.d/
+EXPOSE 9001
+CMD ["php-fpm"]
 ENTRYPOINT ["tini", "--","docker-php-entrypoint" ]
