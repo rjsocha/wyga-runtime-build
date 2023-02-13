@@ -22,7 +22,7 @@ FLAVOUR="${_flavour}"
 VERSION=${MAJOR_VERSION}.${MINOR_VERSION}-${FLAVOUR}
 RELEASE=${MAJOR_VERSION}-${FLAVOUR}
 
-_DOCKERFILE="dockerfile/php/Dockerfile.php-${FLAVOUR}"
+_DOCKERFILE="dockerfile/php/Dockerfile.${FLAVOUR}"
 
 if [[ ! -s ${_DOCKERFILE} ]]
 then
@@ -40,6 +40,8 @@ source build.config
 
 echo "Building: ${REGISTRY}/php:${VERSION} from ${_DOCKERFILE}"
 
-docker buildx build --platform "${PLATFORMS}" -t "${REGISTRY}/php:${VERSION}" -t "${REGISTRY}/php:${RELEASE}" --push --no-cache --pull --build-arg VERSION=${VERSION} -f "${_DOCKERFILE}" .
+docker buildx use multi-arch
+docker buildx build --platform "${PLATFORMS}" -t "${REGISTRY}/php:${VERSION}" -t "${REGISTRY}/php:${RELEASE}" --push --no-cache --pull --build-arg "VERSION=${VERSION}" --build-arg "MAJOR_VERSION=${MAJOR_VERSION}" -f "${_DOCKERFILE}" .
+
 echo "Build: ${REGISTRY}/php:${VERSION}"
-echo "$(date -R): ${REGISTRY}/php:${VERSION}: OK" | tee -a log.php
+echo "$(date -R): ${REGISTRY}/php:${VERSION}: OK"

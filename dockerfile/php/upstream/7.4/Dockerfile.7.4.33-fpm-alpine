@@ -2,7 +2,6 @@ FROM php:7.4.33-fpm-alpine
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN apk upgrade --no-cache && \
     apk add --no-cache tini && \
-    find /usr/local/etc/php-fpm.d/ -type f -delete && \ 
     chmod +x /usr/local/bin/install-php-extensions && \
     IPE_DONT_ENABLE=1 IPE_GD_WITHOUTAVIF=1 install-php-extensions \
       bcmath \
@@ -25,6 +24,3 @@ RUN apk upgrade --no-cache && \
       redis \
       xdebug \
       zip 
-COPY files/php/fpm/7.4/default.conf /usr/local/etc/php-fpm.d/
-CMD ["php-fpm"]
-ENTRYPOINT ["tini", "--","docker-php-entrypoint" ]

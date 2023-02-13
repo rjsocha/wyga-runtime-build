@@ -10,15 +10,24 @@ RUN apk --no-cache add --virtual build-dependencies \
 RUN mkdir /mhsendmail && \
   cp /root/gocode/bin/mhsendmail /mhsendmail/mhsendmail
 FROM alpine AS files
+ARG MAJOR_VERSION
 COPY --from=mhsendmail /mhsendmail/mhsendmail /php/usr/local/bin/mhsendmail
 COPY config/php/fpm/php.ini /php/usr/local/etc/php/php.ini
 COPY files/php/wyga/wyga-entrypoint /php/usr/local/bin/wyga-entrypoint
 COPY files/wyga/env-conf.bash /php/usr/local/bin/env-conf
+COPY files/php/fpm/$MAJOR_VERSION/default.conf /php/usr/local/etc/php-fpm.d/
+RUN ln -s /bin/busybox /php/usr/local/bin/ps && \
+    ln -s /bin/busybox /php/usr/local/bin/ping && \
+    ln -s /bin/busybox /php/usr/local/bin/ip && \
+    ln -s /bin/busybox /php/usr/local/bin/netstat && \
+    ln -s /bin/busybox /php/usr/local/bin/vi
 RUN chmod +x /php/usr/local/bin/wyga-entrypoint /php/usr/local/bin/env-conf
 RUN mkdir -p /php/app/public
 
 FROM wyga/php:$VERSION-upstream
+RUN find /usr/local/etc/php-fpm.d/ -type f -delete 
 COPY --from=files /php/ /
 WORKDIR /app
+EXPOSE 9001
 CMD ["php-fpm"]
 ENTRYPOINT ["/usr/bin/tini", "--","wyga-entrypoint" ]

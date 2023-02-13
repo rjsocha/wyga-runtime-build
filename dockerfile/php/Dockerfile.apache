@@ -16,6 +16,11 @@ COPY config/apache/auth/htpasswd /php/auth/htpasswd
 COPY config/php/apache/php.ini /php/usr/local/etc/php/php.ini
 COPY files/php/wyga/wyga-entrypoint /php/usr/local/bin/wyga-entrypoint
 COPY files/wyga/env-conf.bash /php/usr/local/bin/env-conf
+#RUN ln -s /bin/busybox /php/usr/local/bin/ps && \
+RUN ln -s /bin/busybox /php/usr/local/bin/ping && \
+    ln -s /bin/busybox /php/usr/local/bin/ip && \
+    ln -s /bin/busybox /php/usr/local/bin/netstat && \
+    ln -s /bin/busybox /php/usr/local/bin/vi
 RUN chmod +x /php/usr/local/bin/wyga-entrypoint /php/usr/local/bin/env-conf
 RUN mkdir -p /php/app/public
 
