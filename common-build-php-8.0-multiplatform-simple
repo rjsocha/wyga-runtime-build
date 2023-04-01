@@ -1,0 +1,47 @@
+#!/bin/bash
+set -eu
+CONSTRAINT=8.0
+PLATFORMS="linux/amd64,linux/arm64/v8,linux/386"
+
+_name=$(basename $0)
+if ! [[ $_name =~ ^multi-build-([^-]+)-([0-9]+\.[0-9]+)\.([0-9]+)-(.+)$ ]]
+then
+  echo "ERROR: unable to parse specification ..."
+  exit 1
+fi
+
+_base="${BASH_REMATCH[1]}"
+_major="${BASH_REMATCH[2]}"
+_minor="${BASH_REMATCH[3]}"
+_flavour="${BASH_REMATCH[4]}"
+
+MAJOR_VERSION="${_major}"
+MINOR_VERSION="${_minor}"
+FLAVOUR="${_flavour}"
+
+VERSION=${MAJOR_VERSION}.${MINOR_VERSION}-${FLAVOUR}
+RELEASE=${MAJOR_VERSION}-${FLAVOUR}
+
+_DOCKERFILE="dockerfile/php/Dockerfile.${FLAVOUR}"
+
+if [[ ! -s ${_DOCKERFILE} ]]
+then
+  echo "missing: ${_DOCKERFILE}"
+  exit 1
+fi
+
+if [[ ${CONSTRAINT} != ${MAJOR_VERSION} ]]
+then
+  echo "ERROR: wrong specification (constraint) ..."
+  exit 1
+fi
+
+source build.config
+
+echo "Building: ${REGISTRY}/php:${VERSION} from ${_DOCKERFILE}"
+
+docker buildx use multi-arch
+docker buildx build --platform "${PLATFORMS}" -t "${REGISTRY}/php:${VERSION}" -t "${REGISTRY}/php:${RELEASE}" --push --pull --build-arg "VERSION=${VERSION}" --build-arg "MAJOR_VERSION=${MAJOR_VERSION}" -f "${_DOCKERFILE}" .
+
+echo "Build: ${REGISTRY}/php:${VERSION}"
+echo "$(date -R): ${REGISTRY}/php:${VERSION}: OK"
