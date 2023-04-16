@@ -1,13 +1,15 @@
 ARG VERSION
 FROM nginx:$VERSION-slim as template
 RUN apk --no-cache -U upgrade
-RUN apk del tzdata libintl libc-utils ca-certificates-bundle alpine-keys apk-tools
+#RUN apk del tzdata libintl libc-utils ca-certificates-bundle alpine-keys apk-tools
+RUN apk del tzdata libintl ca-certificates-bundle alpine-keys apk-tools
 RUN rm -rf /etc/group- /etc/passwd- /etc/shadow- /lib/apk /lib/firmware /lib/mdev rm /lib/modules-load.d /lib/sysctl.d /etc/sysctl.conf /etc/udhcpd.conf /media /mnt /opt /srv /var/spool /var/opt /var/mail /var/cache/apk /usr/sbin/nginx-debug /etc/init.d /etc/apk /etc/logrotate.d  /etc/modprobe.d /etc/modules-load.d /etc/network /etc/opt /etc/periodic /etc/secfixes.d /etc/ssl /etc/sysctl.d /home /var/lib/misc /var/lib/udhcpd  /usr/lib/modules-load.d /etc/conf.d /etc/crontabs /etc/profile.d /etc/inittab  /etc/motd /etc/fstab /usr/share/licenses /usr/share/man /usr/share/misc /usr/share/udhcpc
 RUN rm -rf /docker-entrypoint.d /docker-entrypoint.sh 
 COPY files/nginx/wyga/wyga-entrypoint-nr.sh /usr/local/bin/wyga-entrypoint
 COPY files/nginx/wyga/nginx-slim-nr.conf /etc/nginx/nginx.conf
 COPY --chmod=0666 files/nginx/wyga/default-nr.conf /etc/nginx/conf.d/default.conf
 COPY files/nginx/wyga/nginx-flow-request-id.conf /etc/nginx/flow-request-id
+COPY files/nginx/wyga/nginx-fastcgi-config-php.conf /etc/nginx/fastcgi-config-php
 RUN mkdir -p /etc/nginx/stream.d
 RUN mkdir -p /etc/nginx/nginx.d
 COPY files/wyga/env-conf /usr/local/bin/
