@@ -26,7 +26,7 @@ FLAVOUR="${_flavour}"
 
 VERSION=${MAJOR_VERSION}.${MINOR_VERSION}-${FLAVOUR}
 RELEASE=${MAJOR_VERSION}-${FLAVOUR}
-_DOCKERFILE="dockerfile/php/upstream/${MAJOR_VERSION}/Dockerfile.${VERSION}"
+_DOCKERFILE="dockerfile/php/upstream/${MAJOR_VERSION}/Dockerfile.${MAJOR_VERSION}-${FLAVOUR}"
 _VERIFY="verify/php/${MAJOR_VERSION}/modules.trace"
 
 if [[ ! -s ${_DOCKERFILE} ]]
