@@ -1,8 +1,13 @@
-FROM php:8.2.1-fpm-alpine
+ARG VERSION
+FROM php:${VERSION}
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN apk upgrade --no-cache && \ 
-    apk add --no-cache tini && \
-    find /usr/local/etc/php-fpm.d/ -type f -delete && \ 
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -qq && \
+    apt-get dist-upgrade -qq && \
+    apt-get install -o Dpkg::Options::="--path-exclude=/usr/bin/tini-static" \ 
+                    -o Dpkg::Options::="--path-exclude=/usr/share/*" \
+                    -qq --no-install-recommends \
+                    tini busybox && \
     chmod +x /usr/local/bin/install-php-extensions && \
     IPE_DONT_ENABLE=1 IPE_GD_WITHOUTAVIF=1 install-php-extensions \
       bcmath \
@@ -23,8 +28,6 @@ RUN apk upgrade --no-cache && \
       pgsql \
       redis \
       xdebug \
-      zip 
-COPY files/php/fpm/8.2/default.conf /usr/local/etc/php-fpm.d/
-EXPOSE 9001
-CMD ["php-fpm"]
-ENTRYPOINT ["tini", "--","docker-php-entrypoint" ]
+      zip && \
+    apt-get clean all && \
+    find /var/lib/apt/lists/ -type f -delete
