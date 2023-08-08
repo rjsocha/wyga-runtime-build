@@ -55,6 +55,10 @@ docker buildx build --platform "${PLATFORMS}" -t "${REGISTRY}/php:${VERSION}-ups
 
 for _platform in ${PLATFORMS//,/ }
 do
+  if [[ ${CONTEXT["${_platform}"]} == "arm" ]]
+  then
+    continue
+  fi
   docker context use "${CONTEXT["${_platform}"]}"
   echo "Pulling ${REGISTRY}/php:${VERSION}-upstream"
   docker pull "${REGISTRY}/php:${VERSION}-upstream"
